@@ -5,7 +5,7 @@ ENABLE_FFPLAY=FALSE
 ENABLE_TOPAZ=FALSE
 
 # set true for dependant features, export those needed in ffmpeg build script
- 
+
 if [[ "${ENABLE_TOPAZ}" == "TRUE" ]]
 then
     export ENABLE_TOPAZ=TRUE
@@ -14,14 +14,14 @@ then
     echo and hence is for your private use only.
     echo Using the Topaz Video AI filters requires an activate Topaz Video AI licence.
     echo and install of the Application with the models you wish to use.
-    echo To use the Topaz Video AI filters you must set the environment variable TVAI_MODEL_DIR 
+    echo To use the Topaz Video AI filters you must set the environment variable TVAI_MODEL_DIR
     echo and log into Topaz using the login commanda
-    echo 
+    echo
     echo export TVAI_MODEL_DIR="/Applications/Topaz Video AI.app/Contents/Resources/models"
     echo export TVAI_MODEL_DATA_DIR="/Applications/Topaz Video AI.app/Contents/Resources/models"
-    echo 
+    echo
     echo If you have logged out of your Topaz account you can log in using
-    echo out/bin/login topaz_account_email_address topaz_account_password 
+    echo out/bin/login topaz_account_email_address topaz_account_password
 
 fi
 
@@ -36,15 +36,15 @@ export PATH=`echo $PATH | sed 's/:/\n/g' | grep -v '/opt/local' | xargs | tr ' '
 ACTION=$1
 if [[ -z "${ACTION}" ]]
 then
-   echo "No action set, all failures wil stop the script" 
+   echo "No action set, all failures wil stop the script"
 elif [[  "${ACTION}" == "clean" ]]
 then
-   echo "Action set to clean, existing build folders will have make clean run" 
+   echo "Action set to clean, existing build folders will have make clean run"
 elif [[ "${ACTION}" == "skip" ]]
 then
-   echo "Action set to clean, existing build folders will be skipped" 
+   echo "Action set to clean, existing build folders will be skipped"
 else
-   echo "Action set to ${ACTION}, unknow option should be clean or skip" 
+   echo "Action set to ${ACTION}, unknow option should be clean or skip"
    exit 1
 fi
 
@@ -70,10 +70,10 @@ echo "output directory is ${OUT_DIR}"
 
 # prepare workspace
 echoSection "prepare workspace"
-mkdir "$TOOL_DIR"
+mkdir -p "$TOOL_DIR"
 checkStatusAndAction $? "unable to create tool directory"
 PATH="$TOOL_DIR/bin:$PATH"
-mkdir "$OUT_DIR"
+mkdir -p "$OUT_DIR"
 checkStatusAndAction $? "unable to create output directory"
 
 # detect CPU threads (nproc for linux, sysctl for osx)
@@ -128,6 +128,18 @@ START_TIME=$(currentTimeInSeconds)
 echoSection "compile zlib"
 $SCRIPT_DIR/build-zlib.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" "xxxxx" > "$WORKING_DIR/build-zlib.log" 2>&1
 checkStatus $? "build zlib"
+echoDurationInSections $START_TIME
+
+START_TIME=$(currentTimeInSeconds)
+echoSection "compile bzip2"
+$SCRIPT_DIR/build-bzip2.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" "xxxxx" > "$WORKING_DIR/build-bzip2.log" 2>&1
+checkStatus $? "build bzip2"
+echoDurationInSections $START_TIME
+
+START_TIME=$(currentTimeInSeconds)
+echoSection "compile iconv"
+$SCRIPT_DIR/build-iconv.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" "1.17" > "$WORKING_DIR/build-iconv.log" 2>&1
+checkStatus $? "build iconv"
 echoDurationInSections $START_TIME
 
 START_TIME=$(currentTimeInSeconds)
@@ -198,7 +210,6 @@ echoDurationInSections $START_TIME
 
 START_TIME=$(currentTimeInSeconds)
 echoSection "compile openh264"
-#$SCRIPT_DIR/build-openh264.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" "2.1.1" > "$WORKING_DIR/build-openh264.log" 2>&1
 $SCRIPT_DIR/build-openh264.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" "2.3.0" > "$WORKING_DIR/build-openh264.log" 2>&1
 checkStatus $? "build openh264"
 echoDurationInSections $START_TIME

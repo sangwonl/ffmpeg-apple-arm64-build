@@ -50,7 +50,7 @@ configure_build () {
   export CFLAGS="$FF_FLAGS"
 
   FFMPEG_EXTRAS=''
-  
+
   if [[ "${ENABLE_FFPLAY}" == "TRUE" ]]
   then
        FFMPEG_EXTRAS="${FFMPEG_EXTRAS} --enable-sdl2"
@@ -58,7 +58,9 @@ configure_build () {
 
 
   # --pkg-config-flags="--static" is required to respect the Libs.private flags of the *.pc files
-  ./configure --prefix="$4" --enable-gpl --pkg-config-flags="--static"   --pkg-config=$3/bin/pkg-config \
+  # gamz: added --enable-shared for creating shared libs
+  ./configure --prefix="$4" --enable-gpl --pkg-config-flags="--static" --pkg-config=$3/bin/pkg-config \
+      --enable-shared \
       --enable-libaom --enable-libopenh264 --enable-libx264 --enable-libx265 --enable-libvpx \
       --enable-libmp3lame --enable-libopus --enable-neon --enable-runtime-cpudetect \
       --enable-audiotoolbox --enable-videotoolbox --enable-libvorbis --enable-libsvtav1 \
@@ -74,7 +76,6 @@ make_clean() {
   checkStatus $? "change directory failed"
   make clean
   checkStatus $? "make clean for $SOFTWARE failed"
-
 
 }
 
