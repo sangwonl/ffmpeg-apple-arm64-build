@@ -58,13 +58,17 @@ configure_build () {
 
 
   # --pkg-config-flags="--static" is required to respect the Libs.private flags of the *.pc files
-  # gamz: added --enable-shared for creating shared libs
+  # gamz:
+  #   - added --enable-shared for creating shared libs
+  #   - added -enable-debug=3 --disable-optimizations --disable-stripping for debug symbols
+  #   - remove --enable-lto for debug build
   ./configure --prefix="$4" --enable-gpl --pkg-config-flags="--static" --pkg-config=$3/bin/pkg-config \
-      --enable-shared \
+      --enable-shared --enable-debug=3 --disable-optimizations --disable-stripping \
       --enable-libaom --enable-libopenh264 --enable-libx264 --enable-libx265 --enable-libvpx \
       --enable-libmp3lame --enable-libopus --enable-neon --enable-runtime-cpudetect \
       --enable-audiotoolbox --enable-videotoolbox --enable-libvorbis --enable-libsvtav1 \
-      --enable-libass --enable-lto --enable-nonfree --enable-libfdk-aac --enable-opencl ${FFMPEG_EXTRAS}
+      --enable-libass --enable-nonfree --enable-libfdk-aac --enable-opencl ${FFMPEG_EXTRAS}
+      # --enable-libass --enable-lto --enable-nonfree --enable-libfdk-aac --enable-opencl ${FFMPEG_EXTRAS}
 
   checkStatus $? "configuration of ${SOFTWARE} failed"
 
